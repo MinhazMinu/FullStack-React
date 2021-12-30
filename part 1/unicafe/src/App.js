@@ -1,27 +1,42 @@
-import React from "react";
-
+import React, { useState } from "react";
+import Header from "./components/Header";
+import Button from "./components/Button";
+import States from "./components/States";
 const App = () => {
-  const course = "Half Stack application development";
-  const part1 = "Fundamentals of React";
-  const exercises1 = 10;
-  const part2 = "Using props to pass data";
-  const exercises2 = 7;
-  const part3 = "State of a component";
-  const exercises3 = 14;
+  const [state, setState] = useState({ good: 0, neutral: 0, bad: 0 });
 
+  const handleGoodClick = (event) => {
+    let temp = {};
+    if (event.target.textContent === "Good") {
+      temp = { ...state, good: state.good + 1 };
+    } else if (event.target.textContent === "Neutral") {
+      temp = { ...state, neutral: state.neutral + 1 };
+    } else {
+      temp = { ...state, bad: state.bad + 1 };
+    }
+
+    setState(temp);
+  };
   return (
     <div>
-      <h1>{course}</h1>
-      <p>
-        {part1} {exercises1}
-      </p>
-      <p>
-        {part2} {exercises2}
-      </p>
-      <p>
-        {part3} {exercises3}
-      </p>
-      <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>
+      <Header text={"Feedback"} />
+      <Button
+        value={state.good}
+        handleGoodClick={handleGoodClick}
+        text={"Good"}
+      />
+      <Button
+        value={state.neutral}
+        handleGoodClick={handleGoodClick}
+        text={"Neutral"}
+      />
+      <Button
+        value={state.bad}
+        handleGoodClick={handleGoodClick}
+        text={"Bad"}
+      />
+      <Header text="statistics" />
+      <States states={state} />
     </div>
   );
 };
