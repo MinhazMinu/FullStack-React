@@ -4,7 +4,7 @@ import Button from "./components/Button";
 import States from "./components/States";
 const App = () => {
   const [state, setState] = useState({ good: 0, neutral: 0, bad: 0 });
-
+  const [feedback, setFeedback] = useState(false);
   const handleGoodClick = (event) => {
     let temp = {};
     if (event.target.textContent === "Good") {
@@ -14,11 +14,12 @@ const App = () => {
     } else {
       temp = { ...state, bad: state.bad + 1 };
     }
+    setFeedback(true);
 
     setState(temp);
   };
   return (
-    <div>
+    <>
       <Header text={"Feedback"} />
       <Button
         value={state.good}
@@ -36,8 +37,14 @@ const App = () => {
         text={"Bad"}
       />
       <Header text="statistics" />
-      <States states={state} />
-    </div>
+      {!feedback ? (
+        "loading"
+      ) : (
+        <div>
+          <States states={state} />
+        </div>
+      )}
+    </>
   );
 };
 
