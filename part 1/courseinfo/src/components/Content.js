@@ -1,12 +1,13 @@
 import React from "react";
 
-const Content = ({ part, exercise }) => {
+const Content = ({ part, exercises }) => {
   return (
-    <>
-      <h5>
-        {part} : {exercise}
-      </h5>
-    </>
+    <div>
+      <li>
+        {part} : {exercises}{" "}
+      </li>
+    </div>
   );
 };
+
 export default Content;
