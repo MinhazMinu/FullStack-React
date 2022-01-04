@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Maxancedotes from "./components/Maxancedotes";
 
 const App = () => {
   const anecdotes = [
@@ -12,16 +13,36 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
-
+  const [voteCount, setVoteCount] = useState(
+    new Array(anecdotes.length).fill(0)
+  );
+  const [show, setShow] = useState(false);
   const handleNext = (event) => {
-    const rand = Math.trunc(Math.random() * 6) + 1;
+    const rand = Math.trunc(Math.random() * anecdotes.length) + 1;
     setSelected(rand);
   };
+  const handleVote = (selected) => {
+    const newVote = [...voteCount];
+    newVote[selected]++;
+    setVoteCount(newVote);
+    setShow(true);
+  };
+  const hi = selected.max;
 
   return (
     <>
       <div>{anecdotes[selected]}</div>
+      <p>has {voteCount[selected]} Vote</p>
       <button onClick={handleNext}>Next Ancedotes</button>
+      <button onClick={() => handleVote(selected)}>Vote</button>
+      <div>
+        {show && (
+          <Maxancedotes
+            anecdotes={anecdotes[voteCount.indexOf(Math.max(...voteCount))]}
+            voteCount={Math.max(...voteCount)}
+          />
+        )}
+      </div>
     </>
   );
 };
