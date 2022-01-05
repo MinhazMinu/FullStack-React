@@ -1,4 +1,5 @@
 import React from "react";
+import Weather from "./Weather";
 
 const Countries = ({ name, capital, flag, handleShowButton }) => {
   return (
@@ -11,6 +12,7 @@ const Countries = ({ name, capital, flag, handleShowButton }) => {
           Show
         </button>
       )}
+      {capital && <Weather capital={capital} />}
     </div>
   );
 };
