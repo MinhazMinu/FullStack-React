@@ -4,6 +4,7 @@ import PersonsForm from "./components/PersonsForm";
 import Input from "./components/Input";
 import axios from "axios";
 import personServices from "./services/person";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,6 +12,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
   const [controllEffect, setControllEffect] = useState(false);
+  const [massage, setMassage] = useState(null);
+  const [type, setType] = useState("");
 
   useEffect(() => {
     personServices.getAll().then((initialData) => setPersons(initialData));
@@ -33,7 +36,11 @@ const App = () => {
         )
       ) {
         personServices.dataPatch(duplicate.id, newNumber).then((response) => {
-          alert("Data updated");
+          setMassage(`Data Has  benn Updated`);
+          setType("success");
+          setTimeout(() => {
+            setMassage(null);
+          }, 5000);
           setControllEffect(!controllEffect);
         });
       }
@@ -44,19 +51,38 @@ const App = () => {
         id: persons.length + 1,
       };
 
-      personServices
-        .create(temp)
-        .then((returnPerson) => setPersons(persons.concat(returnPerson)));
+      personServices.create(temp).then((returnPerson) => {
+        setPersons(persons.concat(returnPerson));
+        setMassage(`Data Has been Inserted`);
+        setType("success");
+        setTimeout(() => {
+          setMassage(null);
+        }, 5000);
+      });
     }
   };
 
   const handleDelete = (name, id) => {
     const needToDelete = persons.find((e) => e.id == id);
     if (window.confirm(`Delete ${name} ? `)) {
-      personServices.deleteData(needToDelete, id).then((response) => {
-        alert(`${name} is deleted`);
-        setControllEffect(!controllEffect);
-      });
+      personServices
+        .deleteData(needToDelete, id)
+        .then((response) => {
+          alert(`${name} is deleted`);
+          setControllEffect(!controllEffect);
+          setMassage(`Data Has been Deleted`);
+          setType("error");
+          setTimeout(() => {
+            setMassage(null);
+          }, 5000);
+        })
+        .catch((e) => {
+          setMassage(`This data is already deleted`);
+          setType("error");
+          setTimeout(() => {
+            setMassage(null);
+          }, 5000);
+        });
     } else {
       console.log("Not Delete");
     }
@@ -69,6 +95,8 @@ const App = () => {
     : persons;
   return (
     <div>
+      <Notification type={type} massage={massage} />
+      <h3>Filter</h3>
       <Input val={filter} handel={handleFilter} palce="Filter" />
       <h2>Phonebook</h2>
       <PersonsForm
