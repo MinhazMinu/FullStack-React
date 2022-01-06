@@ -3,6 +3,7 @@ import Persons from "./components/Persons";
 import PersonsForm from "./components/PersonsForm";
 import Input from "./components/Input";
 import axios from "axios";
+import personServices from "./services/person";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,10 +12,8 @@ const App = () => {
   const [filter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data));
-  }, []);
+    personServices.getAll().then((initialData) => setPersons(initialData));
+  }, [persons]);
 
   const handleInput = (event) => {
     event.target.placeholder === "Number"
@@ -27,20 +26,38 @@ const App = () => {
     const duplicate = persons.find((e) => e.name == newName);
 
     if (duplicate) {
-      alert(`${newName} is Already There`);
+      if (
+        window.confirm(
+          `${duplicate.name} is already there . do you want to replace the number ?`
+        )
+      ) {
+        personServices.dataPatch(duplicate.id, newNumber).then((response) => {
+          return alert("Data updated");
+        });
+      }
     } else {
       const temp = {
         name: newName,
         number: newNumber,
         id: persons.length + 1,
       };
-      axios
-        .post("http://localhost:3001/persons", temp)
-        .then((response) => setPersons(persons.concat(response.data)));
-      // setPersons(persons.concat(temp));
+
+      personServices
+        .create(temp)
+        .then((returnPerson) => setPersons(persons.concat(returnPerson)));
     }
   };
-  // console.log(persons);
+
+  const handleDelete = (name, id) => {
+    const needToDelete = persons.find((e) => e.id == id);
+    if (window.confirm(`Delete ${name} ? `)) {
+      personServices.deleteData(needToDelete, id).then((response) => {
+        alert(`${name} is deleted`);
+      });
+    } else {
+      console.log("Not Delete");
+    }
+  };
   const handleFilter = (event) => {
     setNewFilter(event.target.value);
   };
@@ -59,7 +76,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       {showPerson.map((person) => (
-        <Persons key={person.id} person={person} />
+        <Persons key={person.id} person={person} handleDelete={handleDelete} />
       ))}
     </div>
   );
