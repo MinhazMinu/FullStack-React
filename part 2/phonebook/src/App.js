@@ -10,10 +10,11 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
+  const [controllEffect, setControllEffect] = useState(false);
 
   useEffect(() => {
     personServices.getAll().then((initialData) => setPersons(initialData));
-  }, [persons]);
+  }, [controllEffect]);
 
   const handleInput = (event) => {
     event.target.placeholder === "Number"
@@ -32,7 +33,8 @@ const App = () => {
         )
       ) {
         personServices.dataPatch(duplicate.id, newNumber).then((response) => {
-          return alert("Data updated");
+          alert("Data updated");
+          setControllEffect(!controllEffect);
         });
       }
     } else {
@@ -53,6 +55,7 @@ const App = () => {
     if (window.confirm(`Delete ${name} ? `)) {
       personServices.deleteData(needToDelete, id).then((response) => {
         alert(`${name} is deleted`);
+        setControllEffect(!controllEffect);
       });
     } else {
       console.log("Not Delete");
